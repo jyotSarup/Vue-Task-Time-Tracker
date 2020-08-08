@@ -19,9 +19,6 @@ export default {
   },
   components: {
     TaskItem
-  },
-  created() {
-    console.log("single object", this.project);
   }
 };
 </script>
@@ -30,6 +27,6 @@ export default {
 .projectItem {
   border-radius: 20px;
   width: 100%;
-  margin:1em;
+  margin: 1em;
 }
 </style>

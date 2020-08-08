@@ -1,11 +1,12 @@
 <template>
   <div class="recordActivityDiv">
-    <h4 class="recordActivityHeading">Task Activity</h4>
+    <h4 class="recordActivityHeading">Start New Task</h4>
     <div>
       <div v-if="!activityStarted" class="timerButtonDiv">
         <q-btn
+          style="height:100px; width:250px"
           icon="timer"
-          label="Start Activity"
+          label="Start Timer"
           stack
           glossy
           color="green"
@@ -21,7 +22,7 @@
           color="red"
           @click="projectPopUp = true"
         />
-        <h6>Activity Started at : {{ startedActivityTime.substr(0, 25) }}</h6>
+        <h6>Activity Started at : {{ startedActivityTime.toString() }}</h6>
 
         <q-dialog v-model="projectPopUp">
           <q-card style="width: 300px">
@@ -48,6 +49,7 @@
                     :options="projectsNames"
                     transition-show
                     lazy-rules
+                    label="Select a project"
                     :rules="[
                       val =>
                         (val && val.length > 0) || 'Please select something'
@@ -92,20 +94,23 @@ export default {
     };
   },
   methods: {
+
+    //starts when a new activity is started and saves time in local storage, even after refreshing the page, the activity is resumed
     startActivity() {
-      this.startedActivityTime = new Date().toString();
+      this.startedActivityTime = new Date();
       this.activityStarted = true;
       localStorage.startedActivityTime = this.startedActivityTime;
       localStorage.activityStarted = this.activityStarted;
     },
+
+    // called when user stops the timer and sets project and task
     async stopActivity() {
-      var stoppedTime = new Date().toString();
-      console.log((Date.parse(stoppedTime) - Date.parse(this.startedActivityTime))/6000);
+      var stoppedTime = new Date();
+
       var saveTask = {
         task_name: this.taskName,
         start_time: this.startedActivityTime,
-        stop_time: stoppedTime,
-        
+        stop_time: stoppedTime
       };
 
       var updatedProjects = this.projects.projects;
@@ -115,9 +120,7 @@ export default {
         }
       }
 
-      this.$store.dispatch(SET_PROJECT_STATUS, updatedProjects).then(() => {
-        console.log("updated");
-      });
+      await this.$store.dispatch(SET_PROJECT_STATUS, updatedProjects).then(() => {});
 
       this.startedActivityTime = "";
       this.activityStarted = false;
@@ -168,10 +171,12 @@ export default {
   padding: 1em;
 }
 .recordActivityDiv {
+  height: 300px;
   width: 100%;
   margin: auto;
 }
 .recordActivityHeading {
+  padding-top: 100px;
   margin: auto;
   text-align: center;
 }
