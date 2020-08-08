@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <TaskActivity/>
+    <TaskActivity :projects = "projects"/>
   </q-page>
 </template>
 
@@ -13,6 +13,11 @@ export default {
   name: 'PageIndex',
   components : {
     TaskActivity
-  }
+  },
+  computed: {
+    ...mapState({
+      projects: state => state.projects
+    })
+  },
 }
 </script>

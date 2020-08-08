@@ -4,8 +4,8 @@ import {
 } from "src/constants";
 
 export default {
-    [SET_PROJECT_STATUS]: ({commit}, projects) => {
-        commit(MUTATE_PROJECTS,projects)
+    [SET_PROJECT_STATUS]: async ({commit}, projects) => {
+        await commit(MUTATE_PROJECTS,projects)
     }
  }
 
