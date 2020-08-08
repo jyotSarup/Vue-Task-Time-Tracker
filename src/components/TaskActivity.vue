@@ -100,10 +100,12 @@ export default {
     },
     async stopActivity() {
       var stoppedTime = new Date().toString();
+      console.log((Date.parse(stoppedTime) - Date.parse(this.startedActivityTime))/6000);
       var saveTask = {
         task_name: this.taskName,
         start_time: this.startedActivityTime,
-        stop_time: stoppedTime
+        stop_time: stoppedTime,
+        
       };
 
       var updatedProjects = this.projects.projects;
