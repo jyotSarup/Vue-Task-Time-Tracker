@@ -49,7 +49,8 @@
                     transition-show
                     lazy-rules
                     :rules="[
-                      val => (val && val.length > 0) || 'Please select something'
+                      val =>
+                        (val && val.length > 0) || 'Please select something'
                     ]"
                   ></q-select>
 
@@ -76,7 +77,8 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import store from "../store";
-import projects from 'src/store/projects';
+import projects from "src/store/projects";
+import { SET_PROJECT_STATUS } from "src/constants";
 
 export default {
   data() {
@@ -85,8 +87,8 @@ export default {
       startedActivityTime: "",
       projectPopUp: false,
       taskName: null,
-      projectSelected:"",
-      projectsNames:[],
+      projectSelected: "",
+      projectsNames: []
     };
   },
   methods: {
@@ -97,16 +99,33 @@ export default {
       localStorage.activityStarted = this.activityStarted;
     },
     async stopActivity() {
-      
       var stoppedTime = new Date().toString();
+      var saveTask = {
+        task_name: this.taskName,
+        start_time: this.startedActivityTime,
+        stop_time: stoppedTime
+      };
+
+      var updatedProjects = this.projects.projects;
+      for (const [key, value] of Object.entries(updatedProjects)) {
+        if (updatedProjects[key].project_name == this.projectSelected) {
+          updatedProjects[key].tasks.push(saveTask);
+        }
+      }
+
+      this.$store.dispatch(SET_PROJECT_STATUS, updatedProjects).then(() => {
+        console.log("updated");
+      });
+
       this.startedActivityTime = "";
       this.activityStarted = false;
       localStorage.startedActivityTime = this.startedActivityTime;
       localStorage.activityStarted = this.activityStarted;
+      console.log(this.projects.projects);
     },
     onSubmit() {
-     this.projectPopUp = false;
-     this.stopActivity();
+      this.projectPopUp = false;
+      this.stopActivity();
     },
 
     onReset() {
@@ -115,7 +134,7 @@ export default {
       this.accept = false;
     }
   },
-  mounted() {  
+  mounted() {
     if (
       localStorage.activityStarted &&
       localStorage.startedActivityTime != ""
@@ -126,19 +145,18 @@ export default {
   },
   created() {
     var projectDetail;
-    for (let project of Object.keys( this.projects)) {
-      projectDetail =  this.projects[project];
+    for (let project of Object.keys(this.projects)) {
+      projectDetail = this.projects[project];
     }
 
-    this.projectsNames = projectDetail.map(x => x.project_name)
-   
+    this.projectsNames = projectDetail.map(x => x.project_name);
   },
-   props: {
-        projects: {
-            type: Object,
-            required: true
-        }
-    },
+  props: {
+    projects: {
+      type: Object,
+      required: true
+    }
+  }
 };
 </script>
 
