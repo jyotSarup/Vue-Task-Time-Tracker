@@ -48,8 +48,6 @@ export default {
     //Change it so that it is 7 days in the past.
     var pastDate = ourDate.getDate() - 7;
     ourDate.setDate(pastDate);
-
-    //Log the date to our web console.
     this.weekDateLimit = ourDate;
   }
 };

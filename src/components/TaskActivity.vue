@@ -24,7 +24,7 @@
         />
         <h6>Activity Started at : {{ startedActivityTime.toString() }}</h6>
 
-        <q-dialog v-model="projectPopUp">
+        <q-dialog :value="projectPopUp">
           <q-card style="width: 300px">
             <q-card-section>
               <div class="text-h6">Update Task in Project</div>
@@ -81,6 +81,7 @@ import { mapActions, mapState } from "vuex";
 import store from "../store";
 import projects from "src/store/projects";
 import { SET_PROJECT_STATUS } from "src/constants";
+const lodashClonedeep = require('lodash.clonedeep');
 
 export default {
   data() {
@@ -97,8 +98,18 @@ export default {
 
     //starts when a new activity is started and saves time in local storage, even after refreshing the page, the activity is resumed
     startActivity() {
+
+      //refresh both inputs
+      this.taskName = "",
+      this.projectSelected = "";
+
+      //capture time of activity start
       this.startedActivityTime = new Date();
+
+      //this flag helps to toggle button
       this.activityStarted = true;
+
+      //store activity start time in local storage to retain it even after a refresh
       localStorage.startedActivityTime = this.startedActivityTime;
       localStorage.activityStarted = this.activityStarted;
     },
@@ -113,7 +124,7 @@ export default {
         stop_time: stoppedTime
       };
 
-      var updatedProjects = this.projects.projects;
+      var updatedProjects = lodashClonedeep(this.projects.projects);
       for (const [key, value] of Object.entries(updatedProjects)) {
         if (updatedProjects[key].project_name == this.projectSelected) {
           updatedProjects[key].tasks.push(saveTask);
@@ -126,7 +137,6 @@ export default {
       this.activityStarted = false;
       localStorage.startedActivityTime = this.startedActivityTime;
       localStorage.activityStarted = this.activityStarted;
-      console.log(this.projects.projects);
     },
     onSubmit() {
       this.projectPopUp = false;
